@@ -1,3 +1,6 @@
+// http -> it is a module. didn't require to install
+//express -> it is a package. reuired to install 
+
 const http = require('http')
 
 const server = http.createServer((req,res)=>{
