@@ -2,9 +2,20 @@ const express = require("express");
 
 const app = express(); //server is created
 
-app.post("/notes",(req,res)=>{
-  res.send("where are you?")
-})
+//this is a middleware
+app.use(express.json());
+
+let notes = []
+
+app.post("/notes", (req, res) => {
+  console.log(req.body);
+  notes.push(req.body)
+  res.json({
+    message:"notes added successfully",
+    notes:notes
+  })
+});
+
 
 //starting the server
 app.listen(3000, () => {
