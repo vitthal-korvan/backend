@@ -1,5 +1,6 @@
 import * as faceapi from "face-api.js";
 import { useEffect, useRef } from "react";
+import "./faceDetection.css";
 export default function FacialExpression() {
   const videoRef = useRef();
   const loadModels = async () => {
@@ -19,36 +20,28 @@ export default function FacialExpression() {
     const detections = await faceapi
       .detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
       .withFaceExpressions();
-    if (detections.length) {
-      let mostProbableExpression = 0;
-      let _expression = "";
-      if (!detections || detections.length === 0) {
-        console.log("No Face Detected");
-        return;
-      }
-
-      for (const expression of Object.keys(detections[0].expressions)) {
-        if (detections[0].expressions[expression] > mostProbableExpression) {
-          mostProbableExpression = detections[0].expressions[expression];
-          // console.log(_expression);
-
-          _expression = expression;
-        }
-      }
-      console.log(_expression);
+    if (!detections || detections.length === 0) {
+      console.log("No Face Detected");
+      return;
     }
+    let mostProbableExpression = 0;
+    let _expression = "";
+    for (const expression of Object.keys(detections[0].expressions)) {
+      if (detections[0].expressions[expression] > mostProbableExpression) {
+        mostProbableExpression = detections[0].expressions[expression];
+        // console.log(_expression);
+
+        _expression = expression;
+      }
+    }
+    console.log(_expression);
   }
   useEffect(() => {
     loadModels().then(startVideo);
   }, []);
   return (
-    <div style={{ position: "relative" }}>
-      <video
-        ref={videoRef}
-        autoPlay
-        muted
-        style={{ width: "620px", height: "480px" }}
-      />
+    <div className="mood-element">
+      <video ref={videoRef} autoPlay muted className="user-video-feed" />
       <br />
       <button onClick={detectMood}>Detect Mood</button>
     </div>
