@@ -4,9 +4,7 @@ const mongoose = require("mongoose");
 
 function connectToDB() {
   mongoose
-    .connect(
-     process.env.MONGODB_URL || "mongodb://localhost:27017/MoodyPlayer",
-    )
+    .connect(process.env.MONGODB_URL)
     .then(() => {
       console.log("Connected to DB");
     })

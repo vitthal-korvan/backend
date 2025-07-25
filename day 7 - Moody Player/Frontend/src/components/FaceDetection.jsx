@@ -1,7 +1,9 @@
 import * as faceapi from "face-api.js";
 import { useEffect, useRef } from "react";
 import "./faceDetection.css";
-export default function FacialExpression() {
+import axios from "axios";
+
+export default function FaceDetection({ setSongs }) {
   const videoRef = useRef();
   const loadModels = async () => {
     const MODEL_URL = "/models";
@@ -29,12 +31,20 @@ export default function FacialExpression() {
     for (const expression of Object.keys(detections[0].expressions)) {
       if (detections[0].expressions[expression] > mostProbableExpression) {
         mostProbableExpression = detections[0].expressions[expression];
-        // console.log(_expression);
+        console.log(_expression);
 
         _expression = expression;
       }
     }
-    console.log(_expression);
+    /* get -> http://localhost:3000/songs?mood=happy*/
+    axios.get(`http://localhost:3000/songs?mood=${_expression}`)
+    .then((response) => {
+      console.log(response.data);
+      setSongs(response.data.songs);
+    })
+    .catch((error) => {
+      console.error("Error fetching songs:", error);
+    });
   }
   useEffect(() => {
     loadModels().then(startVideo);
