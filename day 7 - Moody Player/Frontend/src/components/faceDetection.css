@@ -18,6 +18,7 @@ body, #root {
       align-items: center;
       gap: 1rem;
       justify-content: flex-start;
+      padding: 4rem;
 }
 
 .mood-element button{

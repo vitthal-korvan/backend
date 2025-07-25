@@ -1,5 +1,4 @@
 import  FaceDetection  from "./components/FaceDetection";
-import './App.css'
 import MoodSongs from "./components/MoodSongs";
 
 function App() {
