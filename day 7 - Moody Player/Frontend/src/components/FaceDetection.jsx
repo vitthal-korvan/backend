@@ -1,7 +1,7 @@
+import axios from "axios";
 import * as faceapi from "face-api.js";
 import { useEffect, useRef } from "react";
 import "./faceDetection.css";
-import axios from "axios";
 
 export default function FaceDetection({ setSongs }) {
   const videoRef = useRef();
@@ -37,23 +37,27 @@ export default function FaceDetection({ setSongs }) {
       }
     }
     /* get -> http://localhost:3000/songs?mood=happy*/
-    axios.get(`http://localhost:3000/songs?mood=${_expression}`)
-    .then((response) => {
-      console.log(response.data);
-      setSongs(response.data.songs);
-    })
-    .catch((error) => {
-      console.error("Error fetching songs:", error);
-    });
+    axios
+      .get(`http://localhost:3000/songs?mood=${_expression}`)
+      .then((response) => {
+        console.log(response.data);
+        setSongs(response.data.songs);
+      })
+      .catch((error) => {
+        console.error("Error fetching songs:", error);
+      });
   }
   useEffect(() => {
     loadModels().then(startVideo);
   }, []);
   return (
-    <div className="mood-element">
-      <video ref={videoRef} autoPlay muted className="user-video-feed" />
-      <br />
-      <button onClick={detectMood}>Detect Mood</button>
+    <div>
+      
+      <div className="mood-element">
+        <video ref={videoRef} autoPlay muted className="user-video-feed" />
+        <br />
+        <button onClick={detectMood}>Detect Mood</button>
+      </div>
     </div>
   );
 }
