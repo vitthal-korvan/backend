@@ -40,7 +40,7 @@ export default function FaceDetection({ setSongs }) {
     axios
       .get(`http://localhost:3000/songs?mood=${_expression}`)
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         setSongs(response.data.songs);
       })
       .catch((error) => {
