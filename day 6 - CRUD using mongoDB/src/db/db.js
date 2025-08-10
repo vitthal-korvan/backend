@@ -1,13 +1,12 @@
 const mongoose = require("mongoose");
 
 function connectToDB() {
-  mongoose
-    .connect(
-      "mongodb+srv://korvanvitthal:mBqlyhnl9xJYbAvP@cluster0.mqurdww.mongodb.net/crudNotes"
-    )
-    .then(() => {
-      console.log("Connected to DB");
-    });
+  mongoose.connect(process.env.MONGODB_URL).then(()=>{
+            console.log("Connected to DB");
+      })
+      .catch((err)=>{
+            console.log(err);
+      })
 }
 
 module.exports = connectToDB;

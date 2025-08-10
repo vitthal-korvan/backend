@@ -1,4 +1,5 @@
 //Server.js
+require("dotenv").config();
 const express = require("express");
 const connectToDB = require("./src/db/db");
 const noteModel = require("./src/models/note.model");
