@@ -54,5 +54,5 @@ app.get("/notes", (req, res) => {
 
 //starting the port
 app.listen(3000, () => {
-  console.log("port running on server");
+  console.log("port running on server 3000");
 });
