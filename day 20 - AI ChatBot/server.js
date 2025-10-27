@@ -8,6 +8,10 @@ const io = new Server(httpServer, {
   /* options */
 });
 
+const chatHistory = [
+  
+];
+
 io.on("connection", (socket) => {
   console.log("A User Is Connected :)");
   socket.on("disconnect", () => {
@@ -15,12 +19,19 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ai-message", async (data) => {
+    console.log("Recieved AI Message:", data);
+    chatHistory.push({
+      role: "user",
+      parts: [{ text: data }],
+    });
+    const response = await generateResponse(chatHistory);
 
-    console.log("Recieved AI Message:", data.prompt);
-    const response = await generateResponse(data.prompt);
+    chatHistory.push({
+      role:"model",
+      parts:[{text:response}]
+    })
     console.log("AI Response", response);
-    socket.emit("ai-message-response", {response})
-    
+    socket.emit("ai-message-response",  response );
   });
 });
 
