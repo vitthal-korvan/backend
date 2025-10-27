@@ -8,7 +8,15 @@ const io = new Server(httpServer, {
 });
 
 io.on("connection", (socket) => {
-  // ...
+  console.log("A User Is Connected :)");
+  socket.on("disconnect", () => {
+    console.log("User is Disconnected");
+  });
+  socket.on("message", (data) => {
+    console.log(data);
+
+    console.log("Message Event Created!");
+  });
 });
 
 httpServer.listen(3000, () => {
