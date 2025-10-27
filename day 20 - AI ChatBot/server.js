@@ -1,7 +1,8 @@
+require("dotenv").config();
 const app = require("./src/app");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
-
+const generateResponse = require("./src/service/ai.service");
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   /* options */
@@ -12,10 +13,14 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("User is Disconnected");
   });
-  socket.on("message", (data) => {
-    console.log(data);
 
-    console.log("Message Event Created!");
+  socket.on("ai-message", async (data) => {
+
+    console.log("Recieved AI Message:", data.prompt);
+    const response = await generateResponse(data.prompt);
+    console.log("AI Response", response);
+    socket.emit("ai-message-response", {response})
+    
   });
 });
 
