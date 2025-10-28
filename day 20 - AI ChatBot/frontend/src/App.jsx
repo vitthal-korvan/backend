@@ -1,44 +1,102 @@
-import { useState } from 'react'
-import './App.css'
+import { useState, useEffect } from "react";
+import { io } from "socket.io-client";
+import "./App.css";
 
 function App() {
-  const [message, setMessage] = useState('')
-  const [conversations, setConversations] = useState([])
+  const [socket, setSocket] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [inputText, setInputText] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    if (message.trim()) {
-      setConversations([...conversations, { text: message, sender: 'user' }])
-      setMessage('')
+  const handleSendMessage = () => {
+    if (inputText.trim() === "") return;
+
+    const userMessage = {
+      id: Date.now(),
+      text: inputText,
+      timestamp: new Date().toLocaleTimeString(),
+      sender: "user",
+    };
+
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+
+    socket.emit("ai-message", inputText);
+
+    setInputText("");
+  };
+
+  const handleInputChange = (e) => {
+    setInputText(e.target.value);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSendMessage();
     }
-  }
+  };
+
+  useEffect(() => {
+    let socketInstance = io("http://localhost:3000");
+    setSocket(socketInstance);
+
+    socketInstance.on("ai-message-response", (response) => {
+      const botMessage = {
+        id: Date.now() + 1,
+        text: response,
+        timestamp: new Date().toLocaleTimeString(),
+        sender: "bot",
+      };
+
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+    });
+  }, []);
 
   return (
     <div className="chat-container">
       <div className="chat-header">
-        <h1>AI-ChatBot</h1>
+        <h1>AI Chat Interface</h1>
       </div>
+
       <div className="chat-messages">
-        {conversations.map((conv, index) => (
-          <div key={index} className={`message ${conv.sender}`}>
-            {conv.text}
+        {messages.length === 0 ? (
+          <div className="no-messages">
+            <p>Start a conversation...</p>
           </div>
-        ))}
+        ) : (
+          messages.map((message) => (
+            <div
+              key={message.id}
+              className={`message ${
+                message.sender === "user" ? "user-message" : "bot-message"
+              }`}
+            >
+              <div className="message-content">
+                <span className="message-text">{message.text}</span>
+                <span className="message-timestamp">{message.timestamp}</span>
+              </div>
+            </div>
+          ))
+        )}
       </div>
-      <form className="chat-input-form" onSubmit={handleSubmit}>
+
+      <div className="chat-input">
         <input
           type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type your message here..."
-          className="chat-input"
+          value={inputText}
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          placeholder="Type your message..."
+          className="input-field"
         />
-        <button type="submit" className="send-button">
+        <button
+          onClick={handleSendMessage}
+          className="send-button"
+          disabled={inputText.trim() === ""}
+        >
           Send
         </button>
-      </form>
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

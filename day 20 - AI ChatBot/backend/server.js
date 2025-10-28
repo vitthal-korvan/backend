@@ -3,35 +3,42 @@ const app = require("./src/app");
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const generateResponse = require("./src/service/ai.service");
+const { text } = require("stream/consumers");
+
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  /* options */
+  cors: {
+    origin: "http://localhost:5173", // Adjust
+  },
 });
 
-const chatHistory = [
-  
-];
+const chatHistory = [];
 
 io.on("connection", (socket) => {
-  console.log("A User Is Connected :)");
+  console.log("A user connected");
+
   socket.on("disconnect", () => {
-    console.log("User is Disconnected");
+    console.log("A user disconnected");
   });
 
+  /* ai-message */
+
   socket.on("ai-message", async (data) => {
-    console.log("Recieved AI Message:", data);
+    console.log("Ai message received:", data);
+
     chatHistory.push({
       role: "user",
       parts: [{ text: data }],
     });
-    const response = await generateResponse(chatHistory);
+
+    const mama = await generateResponse(chatHistory);
 
     chatHistory.push({
-      role:"model",
-      parts:[{text:response}]
-    })
-    console.log("AI Response", response);
-    socket.emit("ai-message-response",  response );
+      role: "model",
+      parts: [{ text: mama }],
+    });
+
+    socket.emit("ai-message-response", mama);
   });
 });
 
