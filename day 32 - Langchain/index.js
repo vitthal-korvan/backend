@@ -20,5 +20,5 @@ const chain = promptTemplate.pipe(model)
 
 chain.invoke({ topic: "express" })
     .then(response => {
-        console.log(response);
+        console.log(response.content);
     })
